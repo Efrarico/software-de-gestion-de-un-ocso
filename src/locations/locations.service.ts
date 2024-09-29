@@ -37,7 +37,7 @@ export class LocationsService {
 
   remove(id: number) {
     return this.locationRepository.delete({
-      locationId: id;
+      locationId: id,
     })
   }
 }

@@ -1,20 +1,26 @@
 import { Provider } from "src/providers/entities/provider.entity";
-import { Entity,ManyToOne, Column, PrimaryGeneratedColumn,  } from "typeorm";
-
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 
 @Entity()
 export class Product {
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn('uuid')
     productId: string;
-    @Column({type: "text"})
+
+    @Column({type: 'text'})
     productName: string;
-    @Column({type: "float"})
-    price: number;
-    @Column({type: "int"})
+    
+    @Column({type: 'float'})
+    price: number;	
+    
+    @Column({type: 'int'})
     countSeal: number;
-   @ManyToOne(() => Provider, (provider) => Provider.products, {
-    eager: true
-   })
-        provider: Provider
+    
+    @ManyToOne(()=>Provider, (provider) => provider.products,{
+        eager: true
+    })
+    @JoinColumn({
+        name: 'providerId'
+    })
+    provider: Provider;
 }
 

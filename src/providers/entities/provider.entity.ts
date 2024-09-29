@@ -16,6 +16,5 @@ export class Provider {
     providerPhoneNumber: string;
     @OneToMany(() => Product, (photo) => photo.provider)
     products: Product[]
-    static products: any;
 
 }

@@ -1,3 +1,4 @@
+import { UpdateUserDto } from './dto/update-user.dto';
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
@@ -35,5 +36,12 @@ export class AuthService {
       const token = this.jwtService.sign(payload);
       return token;
   }
-  
+    async UpdateUser(userEmail: string, UpdateUserDto: UpdateUserDto){
+      const newUserData = await this.userRepository.preload({
+        userEmail,
+        ...UpdateUserDto
+      })
+      this.userRepository.save(newUserData)
+      return newUserData
+    }
   }

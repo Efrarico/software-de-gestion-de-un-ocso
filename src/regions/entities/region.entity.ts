@@ -1,19 +1,21 @@
-import { Manager } from "src/managers/entities/manager.entity";
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Location } from "src/locations/entities/location.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Region {
-@PrimaryGeneratedColumn('increment')
-regionId: number;
-@Column({
-    type : "text",
-    unique: true
-})
-regionName: string;
-@Column('simple-array')
-regionStates: string[];
+    @PrimaryGeneratedColumn('increment')
+    regionId: number;
 
-@OneToMany(() => Location, (location) => location.region)
-locations: Location[];
+    @Column('text',{
+        unique: true
+    })
+    regionName: string;
+
+    @Column('text',{
+        array: true
+    })
+    regionStates: string[];
+
+    @OneToMany(()=>Location, (location)=>location.region)
+    locations: Location[];
 }

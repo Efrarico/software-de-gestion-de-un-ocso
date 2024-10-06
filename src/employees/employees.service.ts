@@ -13,13 +13,21 @@ export class EmployeesService {
     @InjectRepository (Employee)
     private employeeRepository: Repository<Employee>
   ){}
- async create(createEmployeeDto: CreateEmployeeDto) {
- const employee = await this.employeeRepository.save(createEmployeeDto)
- return employee
+  create(createEmployeeDto: CreateEmployeeDto) {
+    const employee = this.employeeRepository.save(createEmployeeDto);
+    return employee;
   }
 
   findAll() {
     return this.employeeRepository.find();
+  }
+
+  findByLocation(id: number) {
+    return this.employeeRepository.findBy({
+      location: {
+        locationId: id
+      }
+    })
   }
 
   findOne(id: string) {

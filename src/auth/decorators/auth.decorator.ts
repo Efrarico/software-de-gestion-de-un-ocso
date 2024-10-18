@@ -6,9 +6,8 @@ import { ROLES } from "../constants/roles.constants";
 
 export const Auth = (...roles: ROLES[]) => {
     roles.push(ROLES.ADMIN);
-    return applyDecorators(
+    return  applyDecorators(
         Roles(roles),
         UseGuards(AuthGuard, RolesGuard)
-        
     )
 }

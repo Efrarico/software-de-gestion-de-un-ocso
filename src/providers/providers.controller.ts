@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, U
 import { ProvidersService } from './providers.service';
 import { CreateProviderDto } from './dto/create-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
-import { UserData } from 'src/auth/decorators/user.decorators';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { userData } from 'src/auth/decorators/user.decorator';
 import { User } from 'src/auth/entities/user.entity';
+
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ROLES } from 'src/auth/constants/roles.constants';
 import { ApiAuth } from 'src/auth/decorators/api.decorator';
@@ -15,29 +17,35 @@ import { ApiTags } from '@nestjs/swagger';
 export class ProvidersController {
   constructor(private readonly providersService: ProvidersService) {}
 
+  @Auth(ROLES.MANAGER)
   @Post()
   create(@Body() createProviderDto: CreateProviderDto) {
     return this.providersService.create(createProviderDto);
   }
-  @Auth(ROLES.MANAGER)
+
+  @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
   @Get()
-  findAll(@UserData() user: User) {
-    if (!user.userRoles.includes("Employee")) throw new UnauthorizedException("No estas autorizado, solo admin y managers")
+  findAll(@userData() user: User) {
+    // console.log(user);
+    if (user.userRoles.includes("Employee")) {
+      throw new UnauthorizedException("No estas autorizado, solo admins");
+    }
     return this.providersService.findAll();
   }
 
   @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
   @Get('/name/:name')
-  findByName(@Param('name') name:string){
+  findOneByName(@Param('name') name: string) {
     return this.providersService.findOneByName(name);
   }
-  
+
+
   @Auth(ROLES.EMPLOYEE, ROLES.MANAGER)
   @Get(':id')
   findOne(@Param('id') id: string) {
     const provider = this.providersService.findOne(id);
-    if (!provider) throw new NotFoundException()
-      return provider
+    if (!provider) throw new NotFoundException(`Provider with id: ${id} not found`);
+    return provider;
   }
 
   @Auth(ROLES.MANAGER)

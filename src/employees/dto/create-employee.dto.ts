@@ -37,3 +37,4 @@ export class CreateEmployeeDto extends Employee {
     @IsObject()
     location: Location;
 }
+

@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Delete } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { v4 as uuid } from 'uuid';
-import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
 
 
@@ -11,57 +11,49 @@ import { Repository } from 'typeorm';
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
-  private productRepository: Repository<Product>
-){}
- create(createProductDto: CreateProductDto) {
-  const product = this.productRepository.save(createProductDto)
-  return product;
+    private productRepository: Repository<Product>,
+  ) {}
+  create(createProductDto: CreateProductDto) {
+    const product = this.productRepository.save(createProductDto);
+    return product;
   }
 
   findAll() {
-    return this.productRepository.find({
-      loadEagerRelations: true,
-      relations: {
-        provider: true,
-      }
-    });
+    return this.productRepository.find();
   }
 
-  findOne(id: string) {
-    const product = this.productRepository.findOneBy({
-      productId: id,
-    })
-    if (!product) throw new NotFoundException ()
-      return product;
+   async findOne(id: string) {
+    const  product  = await this.productRepository.findOneBy({productId: id});    
+
+    if (!product) throw new NotFoundException('Product not found');
+
+    return product;
   }
 
   findByProvider(id: string) {
    return this.productRepository.findBy({
-      provider: {
-       providerId: id, 
+      provider:{
+        providerId: id
       }
-    })
+   })
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
-    const productToUpdate = await this.productRepository.preload({
-      productId: id,
+    const protductUpd = await this.productRepository.preload({
+      productId: id, 
       ...updateProductDto
-    })
-    if (!productToUpdate) throw new NotFoundException()
-      this.productRepository.save(productToUpdate);
-    return productToUpdate;
-
+    });
+    if (!protductUpd) throw new NotFoundException('Product not found');
+    this.productRepository.save(protductUpd);
+    return protductUpd;
   }
 
-  remove(id: string) {
-    return this.productRepository.delete({
-      productId: id,
-    })
+   remove(id: string) {
+   this.findOne(id); 
+   this.productRepository.delete(id);
+
     return {
-      message: `objeto con id ${id} eliminado`
-    }
+      message: `Producto con ${id} eliminado`,
+    };
   }
 }
-
-

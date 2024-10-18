@@ -18,5 +18,5 @@ export class CreateLocationDto  extends Location{
 
     @IsObject()
     @IsOptional()
-    region: "regionId";
+    region: Region;
 }

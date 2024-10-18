@@ -9,7 +9,6 @@ import { ApiTags } from '@nestjs/swagger';
 
 @ApiAuth()
 @ApiTags('Regions')
-@ApiTags('Regions')
 @Controller('regions')
 export class RegionsController {
   constructor(private readonly regionsService: RegionsService) {}
